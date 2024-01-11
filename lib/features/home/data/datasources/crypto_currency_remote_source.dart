@@ -1,6 +1,7 @@
 import 'package:crypto_currenct_traker/core/constants/api_path.dart';
 import 'package:crypto_currenct_traker/core/resources/data_state.dart';
-import 'package:crypto_currenct_traker/home/data/models/crypto_currency_model.dart';
+import 'package:crypto_currenct_traker/features/home/data/models/crypto_currency_model.dart';
+
 import 'package:crypto_currenct_traker/injection/injection.dart';
 import 'package:dio/dio.dart';
 
