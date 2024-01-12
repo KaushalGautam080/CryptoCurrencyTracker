@@ -1,4 +1,5 @@
 import 'package:crypto_currenct_traker/features/home/presentation/cubit/crypto_currency_cubit.dart';
+import 'package:crypto_currenct_traker/features/home/presentation/pages/home_page_details.dart';
 import 'package:crypto_currenct_traker/features/theme_cubit/theme_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,10 +13,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final ThemeCubit tCubit;
+  late final HomeCubit homeCubit;
   @override
   void initState() {
     super.initState();
     tCubit = BlocProvider.of<ThemeCubit>(context);
+    homeCubit = BlocProvider.of<HomeCubit>(context);
   }
 
   @override
@@ -30,8 +33,8 @@ class _HomePageState extends State<HomePage> {
                     tCubit.toggle();
                   },
                   icon: (state.themeMode == ThemeMode.light)
-                      ? 
-                      const Icon(Icons.dark_mode):const Icon(Icons.light_mode));
+                      ? const Icon(Icons.dark_mode)
+                      : const Icon(Icons.light_mode));
             },
           ),
         ],
@@ -51,34 +54,50 @@ class _HomePageState extends State<HomePage> {
             if (state is HomeLoadedState) {
               final market = state.cryptocurrency;
               debugPrint("Markets in HomePage: $market");
-              return ListView.builder(
-                  itemCount: market.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: CircleAvatar(
-                          backgroundImage: NetworkImage(market[index].image)),
-                      title: Text(market[index].name.toString()),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "\$ ${market[index].currentPrice}",
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: (market[index].priceChange24 >= 0)
-                                    ? Colors.green
-                                    : Colors.red),
-                          ),
-                          Text(
-                            "${market[index].priceChangePercentage24} %",
-                            style: const TextStyle(fontSize: 12),
-                          )
-                        ],
-                      ),
-                    );
-                  });
+              return RefreshIndicator(
+                onRefresh: () async{
+                  await homeCubit.getMarket();
+                },
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()
+                  ),
+                    itemCount: market.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        onTap: () {
+                          debugPrint(market[index].id);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => DetailsPage(model: market[index],),
+                            ),
+                          );
+                        },
+                        leading: CircleAvatar(
+                            backgroundImage: NetworkImage(market[index].image)),
+                        title: Text(market[index].name.toString()),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "\$ ${market[index].currentPrice}",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: (market[index].priceChange24 >= 0)
+                                      ? Colors.green
+                                      : Colors.red),
+                            ),
+                            Text(
+                              "${market[index].priceChangePercentage24} %",
+                              style: const TextStyle(fontSize: 12),
+                            )
+                          ],
+                        ),
+                      );
+                    }),
+              );
             } else if (state is HomeLoadingState) {
               return const CircularProgressIndicator.adaptive();
             } else {

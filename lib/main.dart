@@ -23,7 +23,8 @@ class MyApp extends StatelessWidget {
           BlocProvider<HomeCubit>(
             create: (context) => HomeCubit()..getMarket(),
           ),
-          BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()..init())
+        BlocProvider<ThemeCubit>(create: (context) => ThemeCubit())
+        
         ],
         child: BlocBuilder<ThemeCubit, ThemeState>(
           builder: (context, state) {

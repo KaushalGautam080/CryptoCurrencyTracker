@@ -21,11 +21,14 @@ class HomeCubit extends Cubit<HomeState> {
       cryptocurrency = dState.data!;
       emit(_state);
     }
-    
-    
-    Timer(const Duration(seconds: 5), () {
-      getMarket();
-      // debugPrint("Data updated");
-    });
+
+    // Timer(const Duration(seconds: 5), () {
+    //   getMarket();
+    //   // debugPrint("Data updated");
+    // });
   }
+
+ 
+
+  
 }
