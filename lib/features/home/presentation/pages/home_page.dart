@@ -11,16 +11,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final ThemeCubit tCubit;
+  @override
+  void initState() {
+    super.initState();
+    tCubit = BlocProvider.of<ThemeCubit>(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-              onPressed: () {
-                BlocProvider.of<ThemeCubit>(context).toggle();
-              },
-              icon: const Icon(Icons.light))
+          BlocBuilder<ThemeCubit, ThemeState>(
+            builder: (context, state) {
+              return IconButton(
+                  onPressed: () {
+                    tCubit.toggle();
+                  },
+                  icon: (state.themeMode == ThemeMode.light)
+                      ? 
+                      const Icon(Icons.dark_mode):const Icon(Icons.light_mode));
+            },
+          ),
         ],
         centerTitle: true,
         title: const Text("Crypto's Market"),
@@ -60,8 +73,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Text(
                             "${market[index].priceChangePercentage24} %",
-                            style: const TextStyle(
-                                color: Colors.black, fontSize: 12),
+                            style: const TextStyle(fontSize: 12),
                           )
                         ],
                       ),

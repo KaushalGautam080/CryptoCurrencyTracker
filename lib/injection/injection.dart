@@ -12,3 +12,5 @@ final cryptoCurrencyRepoImpl = CryptoCurrencyRepoImpl();
 //use cases
 
 final gMUC = GetMarketUseCase(cryptoCurrencyRepoImpl);
+
+
